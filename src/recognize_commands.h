@@ -28,6 +28,8 @@ limitations under the License.
 // accurate overall prediction. This doesn't use any dynamic memory allocation
 // so it's a better fit for microcontroller applications, but this does mean
 // there are hard limits on the number of results it can store.
+
+// **KEEP THIS**, USEFUL FOR SMART TOOLS NN PREDS 
 class PreviousResultsQueue {
  public:
   PreviousResultsQueue(tflite::ErrorReporter* error_reporter)
