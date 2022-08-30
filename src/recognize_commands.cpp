@@ -28,7 +28,7 @@ RecognizeCommands::RecognizeCommands(tflite::ErrorReporter* error_reporter,
       suppression_ms_(suppression_ms),
       minimum_count_(minimum_count),
       previous_results_(error_reporter) {
-  previous_top_label_ = "silence";
+  previous_top_label_ = "engrave";
   previous_top_label_time_ = std::numeric_limits<int32_t>::min();
 }
 

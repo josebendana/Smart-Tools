@@ -13,19 +13,21 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
+// tensorflow lite includes
 #include <TensorFlowLite.h>
-
-#include "main_functions.h"
-#include "command_responder.h"
-#include "feature_provider.h"
-#include "model_settings.h"
-#include "model.h"
-#include "recognize_commands.h"
 #include "tensorflow/lite/micro/micro_error_reporter.h"
 #include "tensorflow/lite/micro/micro_interpreter.h"
 #include "tensorflow/lite/micro/micro_mutable_op_resolver.h"
 #include "tensorflow/lite/schema/schema_generated.h"
 #include "tensorflow/lite/version.h"
+
+// application includes
+#include "main.h"
+#include "command_responder.h"
+#include "feature_provider.h"
+#include "model_settings.h"
+#include "model.h"
+#include "recognize_commands.h"
 
 // Globals, used for compatibility with Arduino-style sketches.
 namespace {
