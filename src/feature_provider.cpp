@@ -19,6 +19,7 @@ limitations under the License.
 #include "micro_features_micro_features_generator.h"
 #include "micro_features_micro_model_settings.h"
 
+// constructor initializes data array to zeros
 FeatureProvider::FeatureProvider(int feature_size, int8_t* feature_data)
     : feature_size_(feature_size),
       feature_data_(feature_data),
