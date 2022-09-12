@@ -41,9 +41,8 @@ FeatureProvider* feature_provider = nullptr;
 RecognizeCommands* recognizer = nullptr;
 int32_t previous_time = 0;
 
-volatile int32_t g_latest_tensor_timestamp;
-std::chrono::milliseconds duration = std::chrono::duration_cast <std::chrono::milliseconds> (std::chrono::system_clock::now().time_since_epoch());
-int32_t g_latest_tensor_timestamp = duration.count();
+//volatile int32_t g_latest_tensor_timestamp;
+int32_t g_latest_tensor_timestamp= std::chrono::duration_cast <std::chrono::milliseconds> (std::chrono::system_clock::now().time_since_epoch()).count();
 
 int32_t LatestTimestamp() { return g_latest_tensor_timestamp; }
 
