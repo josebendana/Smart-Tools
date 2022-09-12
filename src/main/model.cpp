@@ -18,7 +18,7 @@ limitations under the License.
 // for devices that don't have a file system. It was created using the command:
 // xxd -i model.tflite > model.cc
 
-#include "smart_tools_model.h"
+#include "model.h"
 
 // We need to keep the data array aligned on some architectures.
 #ifdef __has_attribute

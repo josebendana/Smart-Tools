@@ -15,9 +15,9 @@ limitations under the License.
 
 #include "feature_provider.h"
 
-#include "audio_provider.h"
-#include "micro_features_micro_features_generator.h"
-#include "micro_features_micro_model_settings.h"
+//#include "audio_provider.h"
+//#include "micro_features_micro_features_generator.h"
+#include "model_settings.h"
 
 // constructor initializes data array to zeros
 FeatureProvider::FeatureProvider(int feature_size, float* feature_data)

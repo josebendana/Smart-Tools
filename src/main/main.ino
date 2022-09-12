@@ -16,6 +16,7 @@ limitations under the License.
 // tensorflow lite includes
 #include <TensorFlowLite.h>
 #include <chrono>
+#include <cstdint>
 #include "tensorflow/lite/micro/micro_error_reporter.h"
 #include "tensorflow/lite/micro/micro_interpreter.h"
 #include "tensorflow/lite/micro/micro_mutable_op_resolver.h"
@@ -41,7 +42,7 @@ RecognizeCommands* recognizer = nullptr;
 int32_t previous_time = 0;
 
 volatile int32_t g_latest_tensor_timestamp;
-std::chrono::milliseconds duration = duration_cast <milliseconds> (std::chrono::system_clock::now().time_since_epoch());
+std::chrono::milliseconds duration = std::chrono::duration_cast <std::chrono::milliseconds> (std::chrono::system_clock::now().time_since_epoch());
 int32_t g_latest_tensor_timestamp = duration.count();
 
 int32_t LatestTimestamp() { return g_latest_tensor_timestamp; }
