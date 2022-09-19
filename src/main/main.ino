@@ -42,7 +42,8 @@ RecognizeCommands* recognizer = nullptr;
 int32_t previous_time = 0;
 
 //volatile int32_t g_latest_tensor_timestamp;
-int32_t g_latest_tensor_timestamp= std::chrono::duration_cast <std::chrono::milliseconds> (std::chrono::system_clock::now().time_since_epoch()).count();
+int32_t g_latest_tensor_timestamp= std::chrono::duration_cast <std::chrono::milliseconds> 
+                                        (std::chrono::system_clock::now().time_since_epoch()).count();
 
 int32_t LatestTimestamp() { return g_latest_tensor_timestamp; }
 
@@ -79,7 +80,7 @@ float feature_buffer[kFeatureElementCount] = {9.80580370e-01, 9.95648267e-02, 9.
  1.95290008e-02, 4.21546857e-01, 3.44167868e-01, 4.03191949e-03,
  5.31554012e-01, 5.31554012e-01, 2.82550313e-01, 3.32329851e-01,
  5.45095615e-01, 3.44167868e-01};
-int8_t* model_input_buffer = nullptr;
+float* model_input_buffer = nullptr;
 }  // namespace
 
 // The name of this function is important for Arduino compatibility.
@@ -140,12 +141,12 @@ void setup() {
   if ((model_input->dims->size != 2) || (model_input->dims->data[0] != 1) ||
       (model_input->dims->data[1] !=
        (kFeatureSliceCount * kFeatureSliceSize)) ||
-      (model_input->type != kTfLiteInt8)) {
+      (model_input->type != kTfLiteFloat32)) {
     TF_LITE_REPORT_ERROR(error_reporter,
                          "Bad input tensor parameters in model");
     return;
   }
-  model_input_buffer = model_input->data.int8;
+  model_input_buffer = model_input->data.float;
 
   // Prepare to access the audio spectrograms from a microphone or other source
   // that will provide the inputs to the neural network.

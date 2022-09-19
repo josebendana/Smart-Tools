@@ -18,16 +18,7 @@ limitations under the License.
 
 #include "tensorflow/lite/c/common.h"
 #include "tensorflow/lite/micro/micro_error_reporter.h"
-#include <chrono>
 
-//volatile int32_t g_latest_tensor_timestamp;
-//
-//namespace std::chrono{
-//  milliseconds duration = duration_cast <milliseconds> (system_clock::now().time_since_epoch());
-//  int32_t g_latest_tensor_timestamp = duration.count();
-//}
-
-// int32_t LatestTimestamp() { return g_latest_tensor_timestamp; }
 
 // Binds itself to an area of memory intended to hold the input features for an
 // audio-recognition neural network model, and fills that data area with the
@@ -42,7 +33,7 @@ class FeatureProvider {
   // remain accessible for the lifetime of the provider object, since subsequent
   // calls will fill it with feature data. The provider does no memory
   // management of this data.
-  FeatureProvider(int feature_size, float* feature_data);
+  FeatureProvider(int feature_size, int8_t* feature_data);
   ~FeatureProvider();
 
   // Fills the feature data with information from audio inputs, and returns how
@@ -51,7 +42,7 @@ class FeatureProvider {
 
  private:
   int feature_size_;
-  float* feature_data_;
+  int8_t* feature_data_;
   // Make sure we don't try to use cached information if this is the first call
   // into the provider.
   bool is_first_run_;

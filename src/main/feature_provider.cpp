@@ -20,7 +20,7 @@ limitations under the License.
 #include "model_settings.h"
 
 // constructor initializes data array to zeros
-FeatureProvider::FeatureProvider(int feature_size, float* feature_data)
+FeatureProvider::FeatureProvider(int feature_size, int8_t* feature_data)
     : feature_size_(feature_size),
       feature_data_(feature_data),
       is_first_run_(true) {
