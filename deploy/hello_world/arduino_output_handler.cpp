@@ -14,7 +14,9 @@ limitations under the License.
 ==============================================================================*/
 
 #include "output_handler.h"
+
 #include "Arduino.h"
+#include "constants.h"
 
 // The pin of the Arduino's built-in LED
 int led = LED_BUILTIN;
@@ -31,11 +33,8 @@ void HandleOutput(tflite::ErrorReporter* error_reporter, int index) {
     initialized = true;
   }
 
-  if (index == 0){digitalWrite(LED_BUILTIN, LOW);  TF_LITE_REPORT_ERROR(error_reporter, "Engraving...\n");}
-
-  else if (index == 1){digitalWrite(LED_BUILTIN, HIGH);  TF_LITE_REPORT_ERROR(error_reporter, "Sanding...\n");}
-
-  else if (index == 2){digitalWrite(LED_BUILTIN, LOW);  TF_LITE_REPORT_ERROR(error_reporter, "Routing...\n");}
-
-  else{digitalWrite(LED_BUILTIN, HIGH);  TF_LITE_REPORT_ERROR(error_reporter, "Cutting...\n");}
+  if (index >= 0 || index <= 3){
+    digitalWrite(led, HIGH);
+    TF_LITE_REPORT_ERROR(error_reporter, "Output!");
+  }
 }

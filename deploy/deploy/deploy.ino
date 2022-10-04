@@ -12,18 +12,15 @@ limitations under the License.
 
 #include <TensorFlowLite.h>
 #include "Arduino.h"
-#include "main_functions.h"
+
 #include "tensorflow/lite/micro/micro_error_reporter.h"
 #include "tensorflow/lite/micro/micro_interpreter.h"
 #include "tensorflow/lite/micro/micro_mutable_op_resolver.h"
+// #include "tensorflow/lite/micro/all_ops_resolver.h"
 #include "tensorflow/lite/schema/schema_generated.h"
 #include "tensorflow/lite/version.h"
 #include <iostream>
 #include "model.h"
-//#include "output_handler.h"
-
-// #include "tensorflow/lite/micro/all_ops_resolver.h"
-
 
 
 #define BLE_SENSE_UUID(val) ("4798e0f2-" val "-4d68-af64-8a8f5258404e")
@@ -41,7 +38,7 @@ namespace {
   tflite::ErrorReporter* error_reporter = nullptr;
   const tflite::Model* model = nullptr;
   tflite::MicroInterpreter* interpreter = nullptr;
-//  int input_length;
+  int input_length;
   TfLiteTensor* model_input = nullptr;
   // -------------------------------------------------------------------------------- //
   // UPDATE THESE VARIABLES TO MATCH THE NUMBER AND LIST OF GESTURES IN YOUR DATASET  //
@@ -86,15 +83,13 @@ void setup() {
   // Set model input settings
 
   TfLiteTensor* model_input = interpreter->input(0);
-//  if ((model_input->dims->size != 2) || 
-//      (model_input->dims->data[0] != 1) ||
-//      (model_input->dims->data[1] != 110)
-//      (model_input->type != kTfLiteInt)) {
-//    TF_LITE_REPORT_ERROR(error_reporter,
-//                         "Bad input tensor parameters in model");
-//    return;
-//  }
-//  input_length = model_input->bytes / sizeof(float);
+  if ((model_input->dims->size != 1) || (model_input->dims->data[0] != 110) ||
+      (model_input->type != kTfLiteFloat32)) {
+    TF_LITE_REPORT_ERROR(error_reporter,
+                         "Bad input tensor parameters in model");
+    return;
+  }
+  input_length = model_input->bytes / sizeof(float);
 
   // Set model output settings
 //  TfLiteTensor* model_output = interpreter->output(0);
@@ -106,7 +101,21 @@ void setup() {
 //    return;
 //  }
 
-
+  static bool is_initialized = false;
+  if (!is_initialized) {
+    pinMode(LED_BUILTIN, OUTPUT);
+    // Pins for the built-in RGB LEDs on the Arduino Nano 33 BLE Sense
+    pinMode(LEDR, OUTPUT);
+    pinMode(LEDG, OUTPUT);
+    pinMode(LEDB, OUTPUT);
+    // Ensure the LED is off by default.
+    // Note: The RGB LEDs on the Arduino Nano 33 BLE
+    // Sense are on when the pin is LOW, off when HIGH.
+    digitalWrite(LEDR, HIGH);
+    digitalWrite(LEDG, HIGH);
+    digitalWrite(LEDB, HIGH);
+    is_initialized = true;
+  }
 }
 
 void loop() {
@@ -141,7 +150,7 @@ void loop() {
     // Pass to the model and run the interpreter
 //    float* model_input = interpreter->typed_input_tensor<float>(0);
     for (int i = 0; i < 110; ++i) {
-      model_input->data.int8[i] = static_cast<int> (feature_buffer[i]);
+      model_input->data.f[i] = feature_buffer[i];
     }
     TfLiteStatus invoke_status = interpreter->Invoke();
     if (invoke_status != kTfLiteOk) {
@@ -150,24 +159,23 @@ void loop() {
     }
 //    TfLiteTensor* output = interpreter->output(0);
 
-//    // Parse the model output
-//    float max_score;
-//    int max_index;
-//    for (int i = 0; i < label_count; ++i) {
-//      float score = interpreter->output(0)->data.f;
-//      if ((i == 0) || (score > max_score)) {
-//        max_score = score;
-//        max_index = i;
-//      }
-//    }
-//    HandleOutput(error_reporter, max_index);
-//    TF_LITE_REPORT_ERROR(error_reporter, "Found %s (%d)", labels[max_index], max_score);
-//    if (labels[max_index] == "engrave" || labels[max_index] == "cut" || labels[max_index] == "sand" || labels[max_index] == "route"){
-//        digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
-//        delay(1000);                       // wait for a second
-//        digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
-//        delay(1000);
-//    }
+    // Parse the model output
+    int8_t max_score;
+    int max_index;
+    for (int i = 0; i < label_count; ++i) {
+      const int8_t score = interpreter->output(0)->data.f[i];
+      if ((i == 0) || (score > max_score)) {
+        max_score = score;
+        max_index = i;
+      }
+    }
+    TF_LITE_REPORT_ERROR(error_reporter, "Found %s (%d)", labels[max_index], max_score);
+    if (labels[max_index] == "engrave" || labels[max_index] == "cut" || labels[max_index] == "sand" || labels[max_index] == "route"){
+        digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
+        delay(1000);                       // wait for a second
+        digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
+        delay(1000);
+    }
 //    else if (labels[max_index] == "cut") digitalWrite(LEDR, LOW);
 //    else if (labels[max_index] == "sand") digitalWrite(LEDG, LOW);
 //    else digitalWrite(LEDB, LOW);
